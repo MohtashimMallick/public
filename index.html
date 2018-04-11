@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- W3school CSS -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>Quiz</title>
+
+  </head>
+  <body style="background-color:rgba(76, 85, 85, 0.363) ; ">
+      <div id ="maindiv" style="margin:10% 30% 10% 30%; background-color: rgba(76, 85, 85, 0.486); border-radius: 50px; ">
+      <div class="container" id="divbox" style="padding:90px; box-shadow:  0px 30px 100px #000000;">
+
+    
+        <h2 style="padding-left: 100px;">Basic JS Quiz</h2>
+    <form>
+        
+        <div class="form-group">
+          <label for="exampleInputPassword1">Student PinCode</label>
+          <input type="password" class="form-control" id="userPinCode" title="Hint: 1234" placeholder="PinCode">
+        </div>
+       
+    
+        <input type="button" id="btn" class="btn btn-primary" onclick="chkCode()" style="box-shadow:  1px 1px 20px #000000;" value="Submit">
+      </form>
+    
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD2QTYZ2kDbBA-ojVFa8BazKLUI4Ixc8Do",
+    authDomain: "quizapp-11739.firebaseapp.com",
+    databaseURL: "https://quizapp-11739.firebaseio.com",
+    projectId: "quizapp-11739",
+    storageBucket: "quizapp-11739.appspot.com",
+    messagingSenderId: "425507835856"
+  };
+  firebase.initializeApp(config);
+</script>
+
+        <script>
+            var flag =true;
+            var fl=true;
+            var f2=true;
+            var f3=true;
+            var maindiv=document.getElementById("maindiv");
+            var divbox=document.getElementById("divbox");
+            var startPoint=0;
+            var counter=0;
+            var questions =[{
+                        question : "JavaScript is can be written -",
+                        correctAns : "directly into HTML pages",
+                        answers : ['directly into CSS file', 'None of these','directly on the Server Script','directly into HTML pages'],
+                        stdAns: ""
+                    },
+                    {
+                        question : "JavaScript is an ________ language.",
+                        correctAns : "interpreted",
+                        answers : ['compiled', 'interpreted'],
+                        stdAns: ""
+                    },{
+                        question : "JavaScript is designed for following purpose -",
+                        correctAns : "To add interactivity to HTML Pages.",
+                        answers : ['To Style HTML Pages', 'To add interactivity to HTML Pages.','To Perform Server Side Scripting Opertion','To Execute Query Related to DB on Server'],
+                        stdAns: ""
+                    },{
+                        question : "JavaScript is ______ Side Scripting Language.",
+                        correctAns : "Browser",
+                        answers : ['Server', 'ISP','None of These','Browser'],
+                        stdAns: ""
+                    },{
+                        question : "Javascript is _________ language.",
+                        correctAns : "Scripting",
+                        answers : ['Programming', 'Application','None of These','Scripting'],
+                        stdAns: ""
+                    },{
+                        question : "JavaScript Code is written inside file having extension __________.",
+                        correctAns : ".js",
+                        answers : ['.jvs', '.javascript','.js','.jsc'],
+                        stdAns: ""
+                    },{
+                        question : "Local Browser used for validations on the Web Pages uses __________.",
+                        correctAns : "JS",
+                        answers : ["Java", "CSS","HTML","JS"],
+                        stdAns: ""  
+                    },{
+                        question : "JavaScript Code can be called by using _________.",
+                        correctAns : "Function / Method",
+                        answers : ["Function / Method", "RMI","Preprocessor"],
+                        stdAns: ""  
+                    },{
+                        question : "Which of the following Attribute is used to include External JS code inside your HTML Document -",
+                        correctAns : "src",
+                        answers : ["link", "src","script","ext"],
+                        stdAns: ""  
+                    },{
+                        question : "We can embed JS code inside HTML directly ?",
+                        correctAns : "True",
+                        answers : ["False", "True"],
+                        stdAns: ""
+                    }];
+            
+            function rcdQLen(ques) {
+                for(var i=0;i<questions.length;i++){
+                    if(questions[i].question === ques){
+                        return i + 1;
+                    }
+                }
+            }
+            function questionReturn(queRtn) {
+                var qes=document.createTextNode(questions[queRtn].question);
+                return qes;
+            }
+            function quizTheame() {
+                maindiv.style.margin="5% 15% 5% 15%";
+                maindiv.style.backgroundColor="rgba(76, 85, 85, 0.363)";
+                maindiv.style.borderRadius="50px";
+                var quizPageDiv=document.createElement("div");
+                quizPageDiv.id="quizPageDiv";
+                quizPageDiv.style.padding="50px";
+                quizPageDiv.style.boxShadow="0px 30px 100px #000000";
+                var qh=document.createElement("h1");
+                var quizhead=document.createTextNode("Basic JS Quiz");
+                qh.style.paddingLeft="300px";
+                qh.appendChild(quizhead);
+                var q1p=document.createElement("p");
+                var Qtext=document.createTextNode("Q"+ (startPoint + 1)+" : ");
+                q1p.appendChild(Qtext);
+                q1p.appendChild(questionReturn(startPoint));
+                var praQueLen=document.createElement("p");
+                praQueLen.style.display="flex   ";
+                praQueLen.style.justifyContent="flex-end";
+                var quelen=document.createTextNode("( "+rcdQLen(q1p.childNodes[1].data)+"/"+(questions.length) +" )");
+                praQueLen.appendChild(quelen);
+                quizPageDiv.appendChild(qh);
+                quizPageDiv.appendChild(praQueLen);
+                quizPageDiv.appendChild(q1p);
+                quizPageDiv.appendChild(document.createElement("hr"));
+                quizPageDiv.appendChild(document.createElement("br"));
+                var ansDiv=document.createElement("div");
+                var myform=document.createElement("form");
+                myform.id="myRadioForm";
+                for(var i=0;i<questions[startPoint].answers.length;i++){
+                    var radi=document.createElement("input");
+                    radi.type="radio";
+                    radi.name="ans";
+                    radi.value=questions[startPoint].answers[i];
+                    var adno=document.createTextNode("  "+(i+1)+") ");
+                    var ansa=document.createTextNode(radi.value);
+                    myform.appendChild(radi);
+                    myform.appendChild(adno);
+                    myform.appendChild(ansa);
+                    myform.appendChild(document.createElement("br"));
+                    ansDiv.appendChild(myform);
+                    quizPageDiv.appendChild(ansDiv);
+                }
+                var btndiv=document.createElement("div");
+                var nxtBtn=document.createElement("input");
+                nxtBtn.type="button";
+                nxtBtn.value="Next";
+                nxtBtn.className = " btn btn-primary";
+                nxtBtn.onclick= anscheck ;
+                nxtBtn.style.boxShadow="1px 1px 20px #000000";
+                btndiv.style.display="flex";
+                btndiv.style.justifyContent="flex-end";
+                btndiv.appendChild(nxtBtn);
+                quizPageDiv.appendChild(document.createElement("br"));
+                quizPageDiv.appendChild(btndiv);
+                maindiv.appendChild(quizPageDiv);
+            }
+            function validateRadios() {
+                var radios = document.getElementsByName("ans");
+                for (var i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    return true;
+                    }
+                }
+                return false;
+            }
+            function anscheck() {
+                var stdans=document.getElementsByName("ans");
+                var valid=validateRadios();
+                var result;
+                if(valid == true){
+                    fl=true;
+                    for(var i=0;i<stdans.length;i++){
+                        if(stdans[i].checked){
+                            questions[startPoint].stdAns=stdans[i].value
+                            break;
+                        }
+                    }
+                    if(questions[startPoint].stdAns===questions[startPoint].correctAns ){
+                        counter++;
+                       }
+                        startPoint++;
+                        maindiv.removeChild(document.getElementById("quizPageDiv"));    
+                        if(startPoint < questions.length){
+                            quizTheame();
+                        }else{
+                            maindiv.style.margin="10% 30% 10% 30%";
+                            maindiv.style.backgroundColor="rgba(76, 85, 85, 0.363)";
+                            maindiv.style.borderRadius="50px";
+                            var resultDiv=document.createElement("div");
+                            resultDiv.id="resultdiv";
+                            resultDiv.style.padding="50px";
+                            resultDiv.style.boxShadow="0px 30px 100px #000000";
+                            result = Math.round((counter/questions.length) * 100);
+                            var br=document.createElement("br");
+                            var h1Result=document.createElement("h1");
+                            h1Result.style.display="flex";
+                            h1Result.style.justifyContent="center";
+                            var renode=document.createTextNode("RESULT");
+                            h1Result.appendChild(renode);
+                            var pRemarks=document.createElement("h2");
+                            if(result >= 60)
+                            {
+                                pRemarks.style.color="Green";
+                                var remarksTxtNode=document.createTextNode("Congratulation You have Passed!!!");
+                                pRemarks.appendChild(remarksTxtNode);
+                            }else{
+                                pRemarks.style.color="red";
+                                var remarksTxtNode=document.createTextNode("Oops! Sorry You have Failed...");
+                                pRemarks.appendChild(remarksTxtNode);
+                            }
+                            var pResult=document.createElement("p");
+                            var resultTxtNode=document.createTextNode("Score : " + result + "%" );
+                            pResult.appendChild(resultTxtNode);
+                            var pNoOfQue=document.createElement("p");
+                            var noOfQueTxtNode=document.createTextNode("No. of Questions : " + startPoint );
+                            pNoOfQue.appendChild(noOfQueTxtNode);
+                            var pNoOfCorr=document.createElement("p");
+                            var noOfCorrTxtNode=document.createTextNode("No. of Correct Answers : " + counter );
+                            pNoOfCorr.appendChild(noOfCorrTxtNode);
+                            resultDiv.appendChild(h1Result);
+                            resultDiv.appendChild(pRemarks);
+                            resultDiv.appendChild(pResult);
+                            resultDiv.appendChild(pNoOfQue);
+                            resultDiv.appendChild(pNoOfCorr);                            
+                            maindiv.appendChild(resultDiv);
+                        }
+                }else {
+                    
+                   if(fl == true){
+                    var alertToChk=document.getElementById("myRadioForm");
+                    alertToChk.style.border="1px rgba(199, 0, 0, 0.71) solid";
+                    alertToChk.style.borderRadius="10px";
+                    var alertPara=document.createElement("p");
+                    alertPara.style.color="rgba(199, 0, 0, 0.71)";
+                    var alertnode=document.createTextNode("Please Check the Correct option....");
+                    alertPara.appendChild(alertnode);
+                    quizPageDiv.appendChild(alertPara);
+                    fl=false;
+                   }
+                }
+            }
+            function chkCode()
+            {
+                if(document.getElementById("userPinCode").value != ""){
+                    if(document.getElementById("userPinCode").value == "1234"){
+                        document.getElementById("userPinCode").value="";
+                        maindiv.removeChild(document.getElementById("divbox"));
+                        quizTheame();
+                    }else{
+                        document.getElementById("userPinCode").value="";
+                        if(f2==true){
+                        if(divbox.lastChild.id == "alertpp")
+                        {
+                            divbox.removeChild(divbox.lastChild);
+                            f3=true;
+                        }
+                        var usrinput= document.getElementById("userPinCode");
+                        usrinput.style.border="1px #ce0202c2 solid";
+                        var alertPara=document.createElement("p");
+                        alertPara.id="alertp";
+                        alertPara.style.color="rgba(199, 0, 0, 0.71)";
+                        var alertnode=document.createTextNode("Invalid code! Please enter correct code.");
+                        alertPara.appendChild(alertnode);
+                        divbox.appendChild(alertPara);
+                        f2=false;
+                        }
+                    }
+                }else{
+                    if(f3==true){
+                        if(divbox.lastChild.id == "alertp")
+                        {
+                            divbox.removeChild(divbox.lastChild);
+                            f2=true;
+                        }
+                        var usrinput= document.getElementById("userPinCode");
+                        usrinput.style.border="1px #ce0202c2 solid";
+                        var alertPara=document.createElement("p");
+                        alertPara.id="alertpp";
+                        alertPara.style.color="rgba(199, 0, 0, 0.71)";
+                        var alertnode=document.createTextNode("Please enter your Pincode...");
+                        alertPara.appendChild(alertnode);
+                        divbox.appendChild(alertPara);
+                        f3=false;
+                    }
+                }
+            }
+           
+        </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
